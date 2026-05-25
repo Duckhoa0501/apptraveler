@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Roamify - Phần mềm lập kế hoạch, khám phá và đặt tour du lịch cao cấp hàng đầu Việt Nam. Hỗ trợ đa ngôn ngữ, chế độ sáng/tối và phân quyền Admin/User.">
+  <title>Roamify | Trải Nghiệm Du Lịch Cao Cấp</title>
+  <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="app-navbar">
+    <div class="nav-container">
+      <a href="#" class="logo" id="logo-link">
+        <i class='bx bx-paper-plane'></i>
+        Roamify
+      </a>
+      <ul class="nav-links">
+        <li class="nav-item active" data-tab="tab-explore">
+          <a href="#explore"><i class='bx bx-compass'></i><span data-i18n="nav_explore">Khám Phá</span></a>
+        </li>
+        <li class="nav-item" data-tab="tab-itinerary">
+          <a href="#itinerary"><i class='bx bx-calendar'></i><span data-i18n="nav_itinerary">Lịch Trình</span></a>
+        </li>
+        <li class="nav-item" data-tab="tab-utilities">
+          <a href="#utilities"><i class='bx bx-list-check'></i><span data-i18n="nav_utilities">Tiện Ích</span></a>
+        </li>
+        <li class="nav-item" data-tab="tab-admin" id="nav-item-admin" style="display:none;">
+          <a href="#admin"><i class='bx bx-grid-alt'></i><span data-i18n="nav_admin">Quản Trị</span></a>
+        </li>
+      </ul>
+      <div class="nav-controls">
+        <button class="control-btn" id="btn-lang-toggle" title="Đổi ngôn ngữ">EN</button>
+        <button class="control-btn" id="btn-theme-toggle" title="Đổi giao diện">
+          <i class='bx bx-moon' id="theme-toggle-icon"></i>
+        </button>
+        <a href="#auth" class="btn-auth-nav" id="btn-auth-action" data-tab="tab-auth">
+          <i class='bx bx-log-in-circle' id="auth-action-icon"></i>
+          <span id="auth-action-text" data-i18n="nav_login">Đăng Nhập</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content" id="main-content-area">
+
+    <!-- SECTION 1: EXPLORE -->
+    <section id="tab-explore" class="tab-section">
+      <div class="hero">
+        <h2 data-i18n="hero_title">Khám Phá Hành Trình Tiếp Theo Của Bạn</h2>
+        <p data-i18n="hero_desc">Tìm kiếm các tour du lịch độc quyền, được thiết kế riêng với các điểm đến đẹp nhất Việt Nam.</p>
+        <div class="search-bar">
+          <div class="search-group">
+            <label for="search-destination" data-i18n="search_label_dest">Điểm Đến</label>
+            <input type="text" id="search-destination" data-i18n-placeholder="search_placeholder" placeholder="Bạn muốn đi đâu?">
+          </div>
+          <div class="search-divider"></div>
+          <div class="search-group">
+            <label for="search-category" data-i18n="search_label_cat">Loại Hình</label>
+            <select id="search-category">
+              <option value="all" data-i18n="cat_all">Tất Cả</option>
+              <option value="beach" data-i18n="cat_beach">Du lịch Biển</option>
+              <option value="mountain" data-i18n="cat_mountain">Khám phá Núi</option>
+              <option value="culture" data-i18n="cat_culture">Văn Hóa</option>
+              <option value="adventure" data-i18n="cat_adventure">Phiêu Lưu</option>
+            </select>
+          </div>
+          <button class="btn-search" id="btn-submit-search">
+            <i class='bx bx-search'></i>
+            <span data-i18n="search_btn">Tìm Kiếm</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="section-title-wrapper">
+        <h3 class="section-title" data-i18n="sec_title_popular">Điểm Đến Hấp Dẫn</h3>
+        <div class="filter-pills" id="category-filter-pills">
+          <button class="pill active" data-filter="all" data-i18n="pill_all">Tất cả</button>
+          <button class="pill" data-filter="beach" data-i18n="pill_beach">Biển</button>
+          <button class="pill" data-filter="mountain" data-i18n="pill_mountain">Núi</button>
+          <button class="pill" data-filter="culture" data-i18n="pill_culture">Văn Hóa</button>
+          <button class="pill" data-filter="adventure" data-i18n="pill_adventure">Phiêu Lưu</button>
+        </div>
+      </div>
+      <div class="destinations-grid" id="destinations-container"></div>
+    </section>
+
+    <!-- SECTION 2: ITINERARY -->
+    <section id="tab-itinerary" class="tab-section" style="display:none;">
+      <div class="section-title-wrapper">
+        <h3 class="section-title" data-i18n="itinerary_title">Lên Kế Hoạch Lịch Trình Chi Tiết</h3>
+      </div>
+      <div class="itinerary-container">
+        <aside class="itinerary-sidebar">
+          <h3><i class='bx bx-calendar-event'></i><span data-i18n="itinerary_days">Các Ngày Đi</span></h3>
+          <div class="day-list" id="day-tabs-container"></div>
+          <button class="btn-add-day" id="btn-add-new-day" data-i18n="itinerary_add_day">+ Thêm Ngày Mới</button>
+          <div class="itinerary-stats">
+            <div class="stat-row">
+              <span class="stat-label" data-i18n="stats_total_act">Tổng số hoạt động:</span>
+              <span class="stat-val" id="stat-total-activities">0</span>
+            </div>
+            <div class="stat-row">
+              <span class="stat-label" data-i18n="stats_total_cost">Dự kiến chi phí:</span>
+              <span class="stat-val cost" id="stat-total-cost">0 đ</span>
+            </div>
+          </div>
+        </aside>
+        <div class="itinerary-main">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h4 id="current-day-title" style="font-size:1.4rem;color:var(--primary);">Ngày 1</h4>
+            <button class="btn-remove-item" id="btn-delete-current-day" style="color:var(--error);font-weight:600;font-size:0.85rem;" data-i18n="itinerary_del_day">Xóa Ngày</button>
+          </div>
+          <div class="timeline" id="timeline-events-container"></div>
+          <div class="form-add-activity">
+            <h4 data-i18n="act_add_title">+ Thêm Hoạt Động Mới</h4>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="act-time" data-i18n="act_label_time">Thời Gian</label>
+                <input type="time" id="act-time" value="08:00">
+              </div>
+              <div class="form-group">
+                <label for="act-type" data-i18n="act_label_type">Loại Hình</label>
+                <select id="act-type">
+                  <option value="sightseeing" data-i18n="act_type_sight">Tham Quan</option>
+                  <option value="hotel" data-i18n="act_type_hotel">Khách Sạn</option>
+                  <option value="dining" data-i18n="act_type_dining">Ẩm Thực</option>
+                  <option value="flight" data-i18n="act_type_flight">Di Chuyển</option>
+                </select>
+              </div>
+              <div class="form-group" style="grid-column:span 2;">
+                <label for="act-title-input" data-i18n="act_label_title">Tên Hoạt Động</label>
+                <input type="text" id="act-title-input" data-i18n-placeholder="act_placeholder_title" placeholder="Ví dụ: Ăn sáng đặc sản...">
+              </div>
+              <div class="form-group">
+                <label for="act-cost" data-i18n="act_label_cost">Chi Phí (VNĐ)</label>
+                <input type="number" id="act-cost" placeholder="0" min="0">
+              </div>
+              <div class="form-group">
+                <label for="act-note" data-i18n="act_label_note">Ghi Chú</label>
+                <input type="text" id="act-note" data-i18n-placeholder="act_placeholder_note" placeholder="Địa chỉ, nhắc nhở...">
+              </div>
+            </div>
+            <button class="btn-add-activity" id="btn-submit-activity" data-i18n="act_btn_save">Lưu Hoạt Động</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: UTILITIES -->
+    <section id="tab-utilities" class="tab-section" style="display:none;">
+      <div class="section-title-wrapper">
+        <h3 class="section-title" data-i18n="utils_title">Công Cụ Hỗ Trợ Chuyến Đi</h3>
+      </div>
+      <div class="utils-layout">
+        <div class="util-card">
+          <h3><i class='bx bx-cloud-sun'></i><span data-i18n="utils_weather_heading">Dự Báo Thời Tiết</span></h3>
+          <div class="weather-widget">
+            <div style="display:flex;gap:1rem;align-items:center;">
+              <select id="weather-city-select" style="background:var(--bg-main);border:1px solid var(--border-color);color:var(--text-main);padding:0.5rem 1rem;border-radius:8px;font-family:var(--font-body);outline:none;">
+                <option value="halong">Hạ Long</option>
+                <option value="phuquoc" selected>Phú Quốc</option>
+                <option value="hagiang">Hà Giang</option>
+                <option value="hoian">Hội An</option>
+              </select>
+              <span style="font-size:0.85rem;color:var(--text-muted);" data-i18n="utils_weather_sync">Cập nhật tự động</span>
+            </div>
+            <div class="weather-header-info">
+              <div class="weather-icon-large" id="weather-icon-current">☀️</div>
+              <div>
+                <div class="weather-temp-now" id="weather-temp-current">29°C</div>
+                <div id="weather-status-current" style="font-weight:600;">Nắng Đẹp</div>
+                <div style="font-size:0.8rem;color:var(--text-muted);" id="weather-sub-current">Độ ẩm: 65% | Sức gió: 12 km/h</div>
+              </div>
+            </div>
+            <div class="weather-forecast" id="weather-forecast-container"></div>
+          </div>
+        </div>
+        <div class="util-card">
+          <h3><i class='bx bx-list-check'></i><span data-i18n="utils_packing_heading">Đồ Dùng Cần Mang</span></h3>
+          <p style="color:var(--text-muted);font-size:0.85rem;margin-bottom:1.5rem;" data-i18n="utils_packing_desc">Tự động gợi ý danh sách chuẩn bị theo địa điểm.</p>
+          <div class="checklist" id="packing-checklist-container"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: AUTH -->
+    <section id="tab-auth" class="tab-section" style="display:none;">
+      <div class="auth-wrapper">
+        <div class="auth-card">
+          <div class="auth-header">
+            <h3 id="auth-title" data-i18n="auth_card_title_login">Thành Viên Roamify</h3>
+            <p id="auth-subtitle" data-i18n="auth_card_desc_login">Đăng nhập tài khoản để quản lý lịch trình du lịch.</p>
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab-btn active" id="auth-toggle-login" data-i18n="auth_tab_login">Đăng Nhập</button>
+            <button class="auth-tab-btn" id="auth-toggle-register" data-i18n="auth_tab_register">Đăng Ký</button>
+          </div>
+          <form class="auth-form" id="form-auth-submit" onsubmit="event.preventDefault();">
+            <div class="form-group">
+              <label for="auth-username" data-i18n="auth_label_username">Tên đăng nhập</label>
+              <div class="input-icon-group">
+                <i class='bx bx-user'></i>
+                <input type="text" id="auth-username" required data-i18n-placeholder="auth_placeholder_user" placeholder="user hoặc admin">
+              </div>
+            </div>
+            <div class="form-group" id="auth-email-group" style="display:none;">
+              <label for="auth-email" data-i18n="auth_label_email">Email</label>
+              <div class="input-icon-group">
+                <i class='bx bx-envelope'></i>
+                <input type="email" id="auth-email" placeholder="example@roamify.com">
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="auth-password" data-i18n="auth_label_password">Mật khẩu</label>
+              <div class="input-icon-group">
+                <i class='bx bx-key'></i>
+                <input type="password" id="auth-password" required data-i18n-placeholder="auth_placeholder_pass" placeholder="user123 hoặc admin123">
+              </div>
+            </div>
+            <div class="form-group" id="auth-role-group" style="display:none;">
+              <label for="auth-role" data-i18n="auth_label_role">Vai trò</label>
+              <div class="input-icon-group">
+                <i class='bx bx-cog'></i>
+                <select id="auth-role">
+                  <option value="user" data-i18n="role_user">Khách hàng (User)</option>
+                  <option value="admin" data-i18n="role_admin">Quản trị viên (Admin)</option>
+                </select>
+              </div>
+            </div>
+            <button type="submit" class="btn-auth-submit" id="btn-auth-submit-text" data-i18n="auth_btn_submit_login">Đăng Nhập Ngay</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: ADMIN -->
+    <section id="tab-admin" class="tab-section" style="display:none;">
+      <div class="section-title-wrapper">
+        <h3 class="section-title"><i class='bx bx-grid-alt'></i><span data-i18n="admin_panel_title">Trang Quản Trị Hệ Thống</span></h3>
+      </div>
+      <div class="admin-layout">
+        <div class="admin-stats-grid">
+          <div class="admin-stat-card">
+            <div class="stat-icon-box"><i class='bx bx-wallet'></i></div>
+            <div class="stat-info">
+              <h5 data-i18n="admin_stat_sales">Doanh Thu</h5>
+              <div class="stat-number" id="admin-stat-revenue">0 đ</div>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-icon-box"><i class='bx bx-package'></i></div>
+            <div class="stat-info">
+              <h5 data-i18n="admin_stat_tours">Tổng Số Tour</h5>
+              <div class="stat-number" id="admin-stat-tours-count">5</div>
+            </div>
+          </div>
+          <div class="admin-stat-card">
+            <div class="stat-icon-box"><i class='bx bx-group'></i></div>
+            <div class="stat-info">
+              <h5 data-i18n="admin_stat_bookings">Số Đơn Booking</h5>
+              <div class="stat-number" id="admin-stat-bookings-count">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="admin-split">
+          <div class="admin-panel-card">
+            <h4><i class='bx bx-plus-circle'></i><span data-i18n="admin_form_heading">Thêm Tour Mới</span></h4>
+            <form id="admin-add-tour-form" onsubmit="event.preventDefault();" style="display:flex;flex-direction:column;gap:1rem;">
+              <div class="form-group">
+                <label for="admin-tour-title" data-i18n="admin_label_title">Tên Tour</label>
+                <input type="text" id="admin-tour-title" required placeholder="Ví dụ: Vịnh Lan Hạ...">
+              </div>
+              <div class="form-grid" style="grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:0;">
+                <div class="form-group">
+                  <label for="admin-tour-location" data-i18n="admin_label_loc">Vị Trí</label>
+                  <input type="text" id="admin-tour-location" required placeholder="Hải Phòng">
+                </div>
+                <div class="form-group">
+                  <label for="admin-tour-code" data-i18n="admin_label_code">Mã Tour</label>
+                  <input type="text" id="admin-tour-code" required placeholder="RM-LH-1234">
+                </div>
+              </div>
+              <div class="form-grid" style="grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:0;">
+                <div class="form-group">
+                  <label for="admin-tour-price" data-i18n="admin_label_price">Giá Tiền (VNĐ)</label>
+                  <input type="number" id="admin-tour-price" required placeholder="3500000" min="0">
+                </div>
+                <div class="form-group">
+                  <label for="admin-tour-category" data-i18n="admin_label_cat">Loại Hình</label>
+                  <select id="admin-tour-category">
+                    <option value="beach" data-i18n="cat_beach">Biển</option>
+                    <option value="mountain" data-i18n="cat_mountain">Núi</option>
+                    <option value="culture" data-i18n="cat_culture">Văn Hóa</option>
+                    <option value="adventure" data-i18n="cat_adventure">Phiêu Lưu</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="admin-tour-image" data-i18n="admin_label_img">Hình Ảnh (URL)</label>
+                <input type="url" id="admin-tour-image" required placeholder="https://images.unsplash.com/...">
+              </div>
+              <div class="form-group">
+                <label for="admin-tour-desc" data-i18n="admin_label_desc">Mô Tả Tour</label>
+                <textarea id="admin-tour-desc" rows="3" required placeholder="Mô tả tóm tắt..."></textarea>
+              </div>
+              <button type="submit" class="btn-auth-submit" style="border-radius:8px;padding:0.75rem;" data-i18n="admin_btn_submit">Đăng Tải Tour</button>
+            </form>
+          </div>
+          <div class="admin-panel-card" style="flex:1;">
+            <h4><i class='bx bx-list-check'></i><span data-i18n="admin_table_heading">Danh Sách Khách Đặt Tour</span></h4>
+            <div class="table-wrapper">
+              <table class="bookings-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="th_passenger">Hành Khách</th>
+                    <th data-i18n="th_tour">Tour</th>
+                    <th data-i18n="th_date">Ngày Đi</th>
+                    <th data-i18n="th_guests">Khách</th>
+                    <th data-i18n="th_total">Tổng Chi Phí</th>
+                    <th data-i18n="th_status">Trạng Thái</th>
+                  </tr>
+                </thead>
+                <tbody id="admin-bookings-rows"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- BOOKING MODAL -->
+  <div class="modal-overlay" id="booking-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="booking-modal-title">Đặt Tour Du Lịch</h3>
+        <button class="btn-close" id="btn-close-booking">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="booking-form" onsubmit="event.preventDefault();">
+          <div class="form-grid" style="grid-template-columns:1fr;gap:1.25rem;">
+            <div class="form-group">
+              <label for="booking-name" data-i18n="booking_label_name">Họ & Tên Trưởng Đoàn</label>
+              <input type="text" id="booking-name" required placeholder="Nguyễn Văn A">
+            </div>
+            <div class="form-grid" style="grid-template-columns:repeat(2,1fr);gap:1rem;">
+              <div class="form-group">
+                <label for="booking-phone" data-i18n="booking_label_phone">Số Điện Thoại</label>
+                <input type="tel" id="booking-phone" required placeholder="0987654321">
+              </div>
+              <div class="form-group">
+                <label for="booking-date" data-i18n="booking_label_date">Ngày Khởi Hành</label>
+                <input type="date" id="booking-date" required>
+              </div>
+            </div>
+            <div class="form-grid" style="grid-template-columns:repeat(2,1fr);gap:1rem;">
+              <div class="form-group">
+                <label for="booking-guests" data-i18n="booking_label_guests">Số Lượng Khách</label>
+                <input type="number" id="booking-guests" value="1" min="1" max="20" required>
+              </div>
+              <div class="form-group">
+                <label for="booking-service" data-i18n="booking_label_service">Gói Dịch Vụ</label>
+                <select id="booking-service">
+                  <option value="standard" data-i18n="service_standard">Tiêu chuẩn (3⭐)</option>
+                  <option value="premium" data-i18n="service_premium">Cao cấp (5⭐ VIP)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="bill-summary">
+            <h4 style="color:var(--text-main);margin-bottom:0.5rem;font-size:0.95rem;" data-i18n="bill_title">Chi Tiết Hóa Đơn</h4>
+            <div class="bill-row"><span data-i18n="bill_base">Đơn giá cơ bản:</span><span id="bill-base-price">0 đ</span></div>
+            <div class="bill-row"><span data-i18n="bill_surcharge">Phụ thu dịch vụ:</span><span id="bill-service-charge">0 đ</span></div>
+            <div class="bill-row"><span data-i18n="bill_qty">Số lượng khách:</span><span id="bill-guests-count">x 1</span></div>
+            <div class="bill-row" id="bill-discount-row" style="display:none;color:var(--success);">
+              <span data-i18n="bill_discount">Mã giảm giá (ROAM50):</span>
+              <span id="bill-discount-val">- 0 đ</span>
+            </div>
+            <div class="promo-input-group">
+              <input type="text" id="promo-code" data-i18n-placeholder="promo_placeholder" placeholder="Nhập mã ưu đãi (Thử: ROAM50)">
+              <button type="button" class="btn-apply" id="btn-apply-promo" data-i18n="promo_apply_btn">Áp dụng</button>
+            </div>
+            <div class="bill-row total"><span data-i18n="bill_total">TỔNG THANH TOÁN:</span><span id="bill-total-price">0 đ</span></div>
+          </div>
+          <button type="submit" class="btn-pay" id="btn-submit-payment" data-i18n="booking_btn_pay">Thanh Toán Ngay & Nhận Vé</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUCCESS MODAL -->
+  <div class="modal-overlay" id="success-modal">
+    <div class="modal-content" style="max-width:500px;">
+      <div class="modal-header">
+        <h3 data-i18n="success_modal_title">Đặt Tour Thành Công!</h3>
+        <button class="btn-close" id="btn-close-success">&times;</button>
+      </div>
+      <div class="modal-body ticket-wrapper">
+        <div class="success-icon"><i class='bx bx-check-circle'></i></div>
+        <p style="font-weight:600;font-size:1.1rem;color:var(--success);margin-bottom:0.5rem;" data-i18n="success_heading">Cảm ơn bạn đã đồng hành cùng Roamify!</p>
+        <p style="color:var(--text-muted);font-size:0.85rem;" data-i18n="success_sub">Vé điện tử đã được sinh tự động:</p>
+        <div class="ticket" id="generated-ticket-ui">
+          <div class="ticket-header">
+            <div class="ticket-logo">BOARDING PASS</div>
+            <div class="ticket-class" id="ticket-service-class">STANDARD CLASS</div>
+          </div>
+          <div class="ticket-body">
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_name">Hành khách</span><span class="ticket-val" id="ticket-passenger-name">NGUYEN VAN A</span></div>
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_code">Mã tour</span><span class="ticket-val" id="ticket-tour-code">RM-PQ-0294</span></div>
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_dep">Khởi hành</span><span class="ticket-val">HAN / SGN</span></div>
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_dest">Điểm đến</span><span class="ticket-val" id="ticket-destination-name">PHÚ QUỐC</span></div>
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_date">Ngày đi</span><span class="ticket-val" id="ticket-departure-date">2026-06-01</span></div>
+            <div class="ticket-field"><span class="ticket-label" data-i18n="tkt_qty">Số khách</span><span class="ticket-val" id="ticket-guests-qty">01 KHÁCH</span></div>
+          </div>
+        </div>
+        <button class="btn-pay" id="btn-dismiss-success" style="margin-top:2rem;" data-i18n="success_btn_done">Hoàn Tất</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXPLANATION PANEL -->
+  <button class="explanation-btn" id="btn-toggle-explanation">
+    <i class='bx bx-code-block'></i>
+    <span data-i18n="explanation_btn">Giải Thích Code & Kiến Trúc</span>
+  </button>
+  <div class="explanation-panel" id="explanation-panel-console">
+    <div class="explanation-header">
+      <div class="explanation-title"><i class='bx bx-terminal'></i><span data-i18n="explanation_panel_title">Developer Dashboard</span></div>
+      <div class="explanation-tabs">
+        <button class="exp-tab active" data-exptab="architecture" data-i18n="exp_tab_arch">Kiến Trúc SPA</button>
+        <button class="exp-tab" data-exptab="state" data-i18n="exp_tab_state">Quản Lý State</button>
+        <button class="exp-tab" data-exptab="styling" data-i18n="exp_tab_style">Thiết Kế CSS</button>
+        <button class="exp-tab" data-exptab="interactive" data-i18n="exp_tab_live">Trực Quan Hóa</button>
+      </div>
+      <button class="btn-close" id="btn-close-explanation" style="font-size:1.8rem;">&times;</button>
+    </div>
+    <div class="explanation-body">
+      <aside class="exp-sidebar"><div class="exp-index" id="exp-index-container"></div></aside>
+      <main class="exp-content" id="exp-content-display"></main>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
